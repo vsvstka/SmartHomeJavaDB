@@ -1,0 +1,12 @@
+=== Generating config.properties ===
+Config generated.
+db.type=postgresql
+postgresql.driver=org.postgresql.Driver
+postgresql.url=jdbc:postgresql://db_postgres:5432/smarthome
+postgresql.user=smarthome_user
+postgresql.password=smarthome_password
+sqlserver.driver=com.microsoft.sqlserver.jdbc.SQLServerDriver
+sqlserver.url=jdbc:sqlserver://db_mssql:1433;databaseName=smarthome;encrypt=false;trustServerCertificate=true;
+sqlserver.user=sa
+sqlserver.password=StrongPass123!
+=========================

@@ -7,7 +7,7 @@ services:
       POSTGRES_USER: smarthome_user
       POSTGRES_PASSWORD: smarthome_password
     ports:
-      - "5432:5432"
+      - "5432:5432"  # Проброс порта на хост (Windows)
     volumes:
       - ./db/init/init_postgres.sql:/docker-entrypoint-initdb.d/init.sql
       - pgdata_postgres:/var/lib/postgresql/data
@@ -19,37 +19,26 @@ services:
     profiles:
       - postgres
 
-  app:
-    build: .
-    container_name: smarthome_app
-    depends_on:
-      db_postgres:
-        condition: service_healthy
+  db_mssql:
+    image: mcr.microsoft.com/mssql/server:2022-latest
+    container_name: smarthome_db_mssql
     environment:
-      # Настройки подключения к БД
-      DB_TYPE: postgresql
-      POSTGRES_HOST: db_postgres
-      POSTGRES_DB: smarthome
-      POSTGRES_USER: smarthome_user
-      POSTGRES_PASSWORD: smarthome_password
-      MSSQL_HOST: db_mssql
-      MSSQL_DB: smarthome
-      MSSQL_USER: sa
-      MSSQL_PASSWORD: StrongPass123!
-
-      # === ВАЖНО: Настройки для отображения GUI ===
-      DISPLAY: ${DISPLAY}
-      # Для некоторых систем может потребоваться:
-      # DBUS_SESSION_BUS_ADDRESS: unix:path=/run/user/1000/bus
+      ACCEPT_EULA: "Y"
+      SA_PASSWORD: "StrongPass123!" # Придумайте сложный пароль
+    ports:
+      - "1433:1433"
     volumes:
-      # === ВАЖНО: Проброс сокета X11 для отображения окна ===
-      - /tmp/.X11-unix:/tmp/.X11-unix:ro
-      # Опционально: проброс файлов авторизации X11
-      # - ${XAUTHORITY:-/home/${USER}/.Xauthority}:/root/.Xauthority:ro
-    # network_mode: host  # Раскомментируйте, если возникают проблемы с подключением к X11
-    restart: on-failure
+      - mssql_data:/var/opt/mssql
+    healthcheck:
+      test: ["CMD-SHELL", "/opt/mssql-tools/bin/sqlcmd -S localhost -U sa -P 'StrongPass123!' -Q 'SELECT 1' || exit 1"]
+      interval: 15s
+      timeout: 10s
+      retries: 10
     profiles:
-      - postgres
+      - mssql
+
+
 
 volumes:
   pgdata_postgres:
+  mssql_data:

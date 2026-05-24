@@ -1,0 +1,11 @@
+target/
+*.log
+*.sql
+!.sql
+db/
+!db/init/
+.git
+.gitignore
+*.md
+.idea/
+*.iml
