@@ -1,5 +1,3 @@
-SET search_path TO svistunova_va;
-
 -- Удаляем таблицы, если они уже были созданы ранее (для чистого перезапуска)
 DROP TABLE IF EXISTS scenarios_devices CASCADE;
 DROP TABLE IF EXISTS scenarios CASCADE;

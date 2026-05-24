@@ -1,0 +1,55 @@
+services:
+  db_postgres:
+    image: postgres:15-alpine
+    container_name: smarthome_db_postgres
+    environment:
+      POSTGRES_DB: smarthome
+      POSTGRES_USER: smarthome_user
+      POSTGRES_PASSWORD: smarthome_password
+    ports:
+      - "5432:5432"
+    volumes:
+      - ./db/init/init_postgres.sql:/docker-entrypoint-initdb.d/init.sql
+      - pgdata_postgres:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U smarthome_user -d smarthome"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+    profiles:
+      - postgres
+
+  app:
+    build: .
+    container_name: smarthome_app
+    depends_on:
+      db_postgres:
+        condition: service_healthy
+    environment:
+      # Настройки подключения к БД
+      DB_TYPE: postgresql
+      POSTGRES_HOST: db_postgres
+      POSTGRES_DB: smarthome
+      POSTGRES_USER: smarthome_user
+      POSTGRES_PASSWORD: smarthome_password
+      MSSQL_HOST: db_mssql
+      MSSQL_DB: smarthome
+      MSSQL_USER: sa
+      MSSQL_PASSWORD: StrongPass123!
+
+      # === ВАЖНО: Настройки для отображения GUI ===
+      DISPLAY: ${DISPLAY}
+      # Для некоторых систем может потребоваться:
+      # DBUS_SESSION_BUS_ADDRESS: unix:path=/run/user/1000/bus
+    volumes:
+      # === ВАЖНО: Проброс сокета X11 для отображения окна ===
+      - /tmp/.X11-unix:/tmp/.X11-unix:ro
+      # Опционально: проброс файлов авторизации X11
+      # - ${XAUTHORITY:-/home/${USER}/.Xauthority}:/root/.Xauthority:ro
+    # network_mode: host  # Раскомментируйте, если возникают проблемы с подключением к X11
+    restart: on-failure
+    profiles:
+      - postgres
+
+volumes:
+  pgdata_postgres:
