@@ -42,7 +42,9 @@ db.type=postgresql
 Далее убедимся, что у нас JDK17:
 
 File → Project Structure → Project:
+
 SDK: выберите 17 (или установите через Add SDK → Download JDK)
+
 Language level: 17
 
 После того как мы в этом убедились открываем файл C:\Users\Daniil\SmartHomeJavaDB\src\main\java\smarthome\Launcher.java и запускаем его.
@@ -80,7 +82,9 @@ db.type=sqlserver
 Далее убедимся, что у нас JDK17:
 
 File → Project Structure → Project:
+
 SDK: выберите 17 (или установите через Add SDK → Download JDK)
+
 Language level: 17
 
 После того как мы в этом убедились открываем файл src\main\java\smarthome\Launcher.java и запускаем его.
